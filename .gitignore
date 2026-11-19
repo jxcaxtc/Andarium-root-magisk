@@ -1,0 +1,16 @@
+# Operit 运行时与附件（不纳入版本控制）
+.operit/
+
+# 镜像 / 包体（体积大，按需自行保管）
+*.img
+*.img.bak
+*.ipa
+*.apk
+*.zip
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
