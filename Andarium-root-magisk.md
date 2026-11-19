@@ -1,10 +1,10 @@
 # Andarium 获取 Root
 
-## 结论先说
+## 结论
 
 **Andarium 用不了内核层面的 root 管理器**，这是实测结论。
 
-Magisk、KernelSU、APatch 这类工具的工作原理是接管内核启动、替换 init、建立 overlay 挂载。它们需要真正的 boot 分区和真正的内核启动流程。而 Andarium 里的系统是跑在用户态的一个容器镜像，内核是宿主的，不存在"给它打补丁的内核"这回事。
+Magisk、KernelSU、APatch 这类工具的工作原理是接管内核启动、替换 init、建立 overlay 挂载。它们需要真正的 boot 分区和真正的内核启动流程。而 Andarium CONFIG_MODULES 未开，且 vermagic 也对不上 → 双重不满足所以就放弃了这条路
 
 所以走的是另一条路：**改 guest 镜像里的 boot 分区**，让 guest 内部自己有一套 root 环境。这套 root 只在 Andarium 的 guest 里有效，出不到 iOS 层面。
 
@@ -12,7 +12,7 @@ Magisk、KernelSU、APatch 这类工具的工作原理是接管内核启动、�
 
 ### 1. 拿到 system.img
 
-从应用商店装好 Andarium，直接进它的安装目录，`andarium-system/guest/system.img` 就是 guest 的系统盘。拷出来。
+从应用商店下载好，然后脱壳Andarium，直接进它的目录，`andarium-system/guest/system.img` 就是 guest 的系统盘。拷出来。
 
 ### 2. 解包
 
@@ -25,12 +25,12 @@ Magisk、KernelSU、APatch 这类工具的工作原理是接管内核启动、�
 ### 4. 塞回去
 
 把修补后的 boot 覆盖回原来的位置，重新打包成 system.img。
+着重说一点修补过后的 boot 镜像必须和原 boot 镜像大小一致
 
 ### 5. 装回去
 
 把新的 system.img 塞回 IPA 的对应位置，重新封装。因为改过包，签名失效，需要重签或用 TrollStore 之类的方式安装。
 
-装完进 guest 终端，`su` 能用就是成功了。
 
 ## 原理
 
@@ -44,7 +44,5 @@ guest 启动的时候，内核会先执行 ramdisk 里的 `init`。Magisk 修补
 
 ## 注意
 
-- 这套 root 是 **guest 内的 root**，不是 iOS 越狱。在 Andarium 里是上帝，出了这个壳就什么都不是。
 - 镜像格式必须和原来一致，原来是 sparse 就还是 sparse，否则加载不起来。
 - 改过的 IPA 一定要重签，原签名必废。
-- 只要有 root，就能装 Magisk 模块、能改 guest 的 `/system`，但别指望它能突破沙盒。
