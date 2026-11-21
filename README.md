@@ -2,6 +2,7 @@
 下载成品https://github.com/jxcaxtc/Andarium-root-magisk/releases
 下载后自行安装面具即可获得 root 权限
 ![IMG_1951](https://github.com/jxcaxtc/Andarium-root-magisk/blob/main/IMG_1951.png?raw=true)
+
 请给一个 stars 吧🥺
 ## 结论
 
